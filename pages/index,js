@@ -1,0 +1,40 @@
+import { useState } from 'react';
+
+export default function Home() {
+  const [prompt, setPrompt] = useState("");
+  const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleGenerate = async () => {
+    setLoading(true);
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt }),
+    });
+    const data = await res.json();
+    setResponse(data.response);
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ backgroundColor: 'rgb(13, 13, 13)', color: '#eee', minHeight: '100vh', padding: '2rem', fontFamily: 'Arial' }}>
+      <h1 style={{ fontSize: '2rem' }}>🧠 Roblox Script Generator</h1>
+      <textarea
+        value={prompt}
+        onChange={(e) => setPrompt(e.target.value)}
+        placeholder="Type here)"
+        rows="4"
+        style={{ width: '100%', marginTop: '1rem', padding: '1rem', fontSize: '1rem', backgroundColor: '#222', color: '#fff', border: 'none', borderRadius: '8px' }}
+      />
+      <button
+        onClick={handleGenerate}
+        disabled={loading}
+        style={{ marginTop: '1rem', padding: '0.75rem 1.5rem', backgroundColor: '#0f0', color: '#000', fontWeight: 'bold', border: 'none', borderRadius: '8px' }}
+      >
+        {loading ? "Generating..." : "Generate Code"}
+      </button>
+      <pre style={{ marginTop: '2rem', backgroundColor: '#222', padding: '1rem', borderRadius: '8px', whiteSpace: 'pre-wrap' }}>{response}</pre>
+    </div>
+  );
+}
